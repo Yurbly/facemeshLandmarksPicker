@@ -1,0 +1,36 @@
+{
+  "name": "facemeshlandmarkspicker",
+  "version": "1.0.0",
+  "description": "A UI tool for working with facemesh landmarks: get position, pick a list, visualize area ",
+  "main": "index.js",
+  "scripts": {
+    "dev": "parcel public/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yurbly/facemeshLandmarksPicker.git"
+  },
+  "keywords": [
+    "facemesh",
+    "landmark",
+    "face",
+    "detection"
+  ],
+  "author": "Iurii Novikov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yurbly/facemeshLandmarksPicker/issues"
+  },
+  "homepage": "https://github.com/Yurbly/facemeshLandmarksPicker#readme",
+  "devDependencies": {
+    "parcel": "^2.8.3",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "paper": "^0.12.17",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.6"
+  }
+}
