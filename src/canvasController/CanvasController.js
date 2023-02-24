@@ -1,4 +1,5 @@
 import Paper from "paper";
+import { Point, Path, Size } from "paper";
 import { UVS, FACES } from '../geometryData';
 
 const INIT_LANDMARK_COLOR = '#00ff00';
@@ -11,6 +12,8 @@ const hitOptions = {
     fill: true,
     tolerance: HOVER_TOLERANCE,
 };
+
+const HOVER_SCALE = 2;
 
 class CanvasController {
 
@@ -31,7 +34,7 @@ class CanvasController {
         this.drawFaces();
 
         this.makeLandmarksHoverable();
-
+        
         Paper.view.draw();
     }
 
@@ -47,7 +50,7 @@ class CanvasController {
             const result = Paper.project.hitTestAll(point, hitOptions);
             if (!result || !result.length) return;
             const landmarks = result.filter(r => r.item.data.type === 'landmark');
-            
+
             if (!landmarks.length) return;
 
             let minDist;
@@ -60,23 +63,33 @@ class CanvasController {
                     minDist = dist;
                 }
             });
-            if (!closest) return;
+            const isClosestAlreadyHoverd = this.hoveredLandmark && this.hoveredLandmark.position.equals(closest.position); 
+            if (!closest || isClosestAlreadyHoverd) return;
             this.dismissPrevHoveredLandmark();
 
             closest.data.prevFillColor = closest.fillColor;
             closest.fillColor = 'red';
+            !closest.data.scaled && closest.tween(
+                { scaling: 1 },
+                { scaling: HOVER_SCALE },
+                {
+                    duration: 300
+                });
+            closest.data.scaled = true;
+
             this.hoveredLandmark = closest;
         };
-        Paper.view.onMouseLeave = () => {
-            console.log('onMouseLeave');
-            return this.dismissPrevHoveredLandmark();
-        };
+        Paper.view.onMouseLeave = () => this.dismissPrevHoveredLandmark();
     }
 
     dismissPrevHoveredLandmark = () => {
         if (!this.hoveredLandmark) return;
         this.hoveredLandmark.fillColor = this.hoveredLandmark.data.prevFillColor || INIT_LANDMARK_COLOR;
         this.hoveredLandmark.data.prevFillColor = null;
+        if (this.hoveredLandmark.data.scaled) {
+            this.hoveredLandmark.data.scaled = false;
+            this.hoveredLandmark.tween({ scaling: this.hoveredLandmark.scaling }, { scaling: 1 }, { duration: 300 })
+        }
         this.hoveredLandmark = null;
     }
 
@@ -93,9 +106,14 @@ class CanvasController {
         const x = xRel * width;
         const y = yRel * height;
         const point = new Paper.Point(x, y);
-        const landmark = new Paper.Path.Circle(point, LANDMARK_SIZE);
+        const landmark = new Paper.Path.Circle({
+            position: point, 
+            radius: LANDMARK_SIZE,
+            applyMatrix: false
+        });
         landmark.data.type = 'landmark';
         landmark.fillColor = INIT_LANDMARK_COLOR;
+
         this.landmarks.push(landmark);
     };
 
