@@ -34,7 +34,7 @@ class CanvasController {
         this.drawFaces();
 
         this.makeLandmarksHoverable();
-        
+
         Paper.view.draw();
     }
 
@@ -42,17 +42,12 @@ class CanvasController {
         Paper.view.onMouseMove = (e) => {
             const { point } = e;
 
-            if (this.hoveredLandmark) {
-                const distToPrevHovered = point.getDistance(this.hoveredLandmark.position);
-                if (distToPrevHovered > HOVER_TOLERANCE) this.dismissPrevHoveredLandmark();
-            }
-
             const result = Paper.project.hitTestAll(point, hitOptions);
-            if (!result || !result.length) return;
-            const landmarks = result.filter(r => r.item.data.type === 'landmark');
+            const landmarks = result?.filter(r => r.item.data.type === 'landmark');
 
-            if (!landmarks.length) return;
-
+            if (!landmarks?.length) {
+                return this.deselectLandmark();
+            }
             let minDist;
             let closest;
             landmarks.forEach(l => {
@@ -63,32 +58,39 @@ class CanvasController {
                     minDist = dist;
                 }
             });
-            const isClosestAlreadyHoverd = this.hoveredLandmark && this.hoveredLandmark.position.equals(closest.position); 
-            if (!closest || isClosestAlreadyHoverd) return;
-            this.dismissPrevHoveredLandmark();
-
-            closest.data.prevFillColor = closest.fillColor;
-            closest.fillColor = 'red';
-            !closest.data.scaled && closest.tween(
-                { scaling: 1 },
-                { scaling: HOVER_SCALE },
-                {
-                    duration: 300
-                });
-            closest.data.scaled = true;
-
-            this.hoveredLandmark = closest;
+            if (!closest) return;
+            const isClosestAlreadyHoverd = this.hoveredLandmark && this.hoveredLandmark === closest;
+            if (isClosestAlreadyHoverd) return;
+            this.deselectLandmark();
+            //todo here sometimes comes landmark with red fillcolor - wrong
+            //this.hoveredLandmark is deleted, but the fillColor remains red 
+            this.selectLandmark(closest);
         };
-        Paper.view.onMouseLeave = () => this.dismissPrevHoveredLandmark();
+        Paper.view.onMouseLeave = () => this.deselectLandmark();
+        Paper.view.onMouseEnter = () => this.deselectLandmark();
     }
 
-    dismissPrevHoveredLandmark = () => {
+    selectLandmark(landmark) {
+        landmark.data.prevFillColor = landmark.fillColor;
+        landmark.fillColor = 'red';
+        landmark.tween(
+            { scaling: landmark.scaling },
+            { scaling: HOVER_SCALE },
+            {
+                duration: 150
+            });
+            landmark.data.scaled = true;
+            
+            this.hoveredLandmark = landmark;
+        }
+        
+    deselectLandmark = () => {
         if (!this.hoveredLandmark) return;
         this.hoveredLandmark.fillColor = this.hoveredLandmark.data.prevFillColor || INIT_LANDMARK_COLOR;
         this.hoveredLandmark.data.prevFillColor = null;
         if (this.hoveredLandmark.data.scaled) {
             this.hoveredLandmark.data.scaled = false;
-            this.hoveredLandmark.tween({ scaling: this.hoveredLandmark.scaling }, { scaling: 1 }, { duration: 300 })
+            this.hoveredLandmark.tween({ scaling: this.hoveredLandmark.scaling }, { scaling: 1 }, { duration: 150 })
         }
         this.hoveredLandmark = null;
     }
@@ -107,7 +109,7 @@ class CanvasController {
         const y = yRel * height;
         const point = new Paper.Point(x, y);
         const landmark = new Paper.Path.Circle({
-            position: point, 
+            position: point,
             radius: LANDMARK_SIZE,
             applyMatrix: false
         });
