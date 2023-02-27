@@ -8,6 +8,6 @@ const CanvasComponent = styled.canvas`
   height: 100vh;
 `;
 
-const Canvas = forwardRef((props, ref) => <CanvasComponent ref={ref} {...props} id="canvas" />);
+const Canvas = forwardRef((props, ref) => <CanvasComponent ref={ref} {...props} id="canvas" resize="true" />);
 
 export default Canvas;
