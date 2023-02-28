@@ -1,4 +1,4 @@
 export const getNumbersFromCSVString = (input) => input
     .split(',')
     .map(v => v.trim())
-    .filter(v => v && Number.isInteger(+v))
+    .filter((v, i, array) => v && Number.isInteger(+v) && array.indexOf(v) === i);

@@ -29,11 +29,11 @@ export const LandmarksContextProvider = ({ children }) => {
 
     const saveSet = () => {
         const newSet = {
+            id: new Date().getTime(),
             landmarks: selectedWithSearch,
             color: 'blue',
             visible: false,
         }
-        console.log('newSet', newSet);
         setSets(sets => [...sets, newSet]);
     }
 

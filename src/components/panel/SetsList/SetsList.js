@@ -34,7 +34,7 @@ const Landmark = styled.div`
 
 const Set = ({remove, landmarks, color, visible}) => {
     return <SetContainer>
-        <LandmarksContainer>{landmarks.map(l => <Landmark>{l}</Landmark>)}</LandmarksContainer>
+        <LandmarksContainer>{landmarks.map(l => <Landmark key={l}>{l}</Landmark>)}</LandmarksContainer>
         <SetControls remove={remove} />
     </SetContainer>
 }
@@ -45,6 +45,6 @@ export default () => {
 
     if (!sets.length) return null;
     return <SetsContainer>
-        {sets.map((set, i) => <Set remove={() => removeSet(i)} {...set}/>)}
+        {sets.map((set, i) => <Set key={set.id} remove={() => removeSet(i)} {...set}/>)}
     </SetsContainer>;
 }; 

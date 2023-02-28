@@ -44,10 +44,7 @@ export const Panel = () => {
                 }}
                 InputLabelProps={{ shrink: true }}
                 placeholder="1, 34, 252"
-                onKeyDown={e => {
-                    console.log(e);
-                    return e.code === "Enter" && saveSet();
-                }}
+                onKeyDown={e => e.code === "Enter" && saveSet()}
                 autoFocus
             />
             <SaveButton />
