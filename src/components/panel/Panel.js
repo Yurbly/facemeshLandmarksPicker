@@ -1,9 +1,10 @@
 import { TextField } from '@mui/material';
-import { useState, useRef, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { useLandmarksContext } from '../../contexts/LandmarksContext';
+import SetsList from './SetsList/SetsList';
+import { SaveButton } from './SaveButton';
 
-const PanelComponent = styled.main`
+const PanelComponent = styled.aside`
     position: absolute;
     top: 0;
     right: 0;
@@ -15,27 +16,42 @@ const PanelComponent = styled.main`
     display: flex;
     flex-flow: column;
     width: 30%;
+    gap: 20px;
 `;
 
 const Search = styled(TextField)`
     width: 100%;
 `;
 
+const Header = styled.div`
+    width: 100%;
+    display: flex;
+    gap: 20px;
+`;
+
 export const Panel = () => {
 
-    const { search } = useLandmarksContext();
+    const { findLandmarks, saveSet } = useLandmarksContext();
 
     return <PanelComponent>
-        <Search
-            id="outlined-basic"
-            label="Search landmarks"
-            variant="outlined"
-            onChange={(event) => {
-                search(event.target.value);
-            }}
-            InputLabelProps={{ shrink: true }}
-            placeholder="1, 34, 252"
-            autoFocus
-        />
+        <Header>
+            <Search
+                id="outlined-basic"
+                label="Search landmarks"
+                variant="outlined"
+                onChange={(event) => {
+                    findLandmarks(event.target.value);
+                }}
+                InputLabelProps={{ shrink: true }}
+                placeholder="1, 34, 252"
+                onKeyDown={e => {
+                    console.log(e);
+                    return e.code === "Enter" && saveSet();
+                }}
+                autoFocus
+            />
+            <SaveButton />
+        </Header>
+        <SetsList/>
     </PanelComponent>;
 }; 

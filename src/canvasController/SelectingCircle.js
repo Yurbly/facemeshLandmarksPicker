@@ -34,9 +34,9 @@ class SelectingCircle {
     }
     
     showCircle(point) {
-        this.circle.bringToFront();
         this.circle.position = point;
         this.circle.opacity = 1;
+        this.circle.bringToFront();
     }
 
     hideCircle() {
@@ -52,6 +52,7 @@ class SelectingCircle {
         this.label.position.x = labelX;
         this.label.position.y = point.y;
         this.label.opacity = 1;
+        this.label.bringToFront();
     }
 
     hideLabel() {
