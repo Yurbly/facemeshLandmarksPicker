@@ -1,8 +1,7 @@
-import { TextField } from '@mui/material';
 import styled from 'styled-components';
-import { useLandmarksContext } from '../../contexts/LandmarksContext';
 import SetsList from './SetsList/SetsList';
 import { SaveButton } from './SaveButton';
+import { Search } from './Search';
 
 const PanelComponent = styled.aside`
     position: absolute;
@@ -19,10 +18,6 @@ const PanelComponent = styled.aside`
     gap: 20px;
 `;
 
-const Search = styled(TextField)`
-    width: 100%;
-`;
-
 const Header = styled.div`
     width: 100%;
     display: flex;
@@ -31,24 +26,11 @@ const Header = styled.div`
 
 export const Panel = () => {
 
-    const { findLandmarks, saveSet } = useLandmarksContext();
-
     return <PanelComponent>
         <Header>
-            <Search
-                id="outlined-basic"
-                label="Search landmarks"
-                variant="outlined"
-                onChange={(event) => {
-                    findLandmarks(event.target.value);
-                }}
-                InputLabelProps={{ shrink: true }}
-                placeholder="1, 34, 252"
-                onKeyDown={e => e.code === "Enter" && saveSet()}
-                autoFocus
-            />
+            <Search />
             <SaveButton />
         </Header>
-        <SetsList/>
+        <SetsList />
     </PanelComponent>;
 }; 

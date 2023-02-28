@@ -109,8 +109,10 @@ class CanvasController {
 
     deselectAllBut(landmarkNums) {
         this.landmarks
-            .filter(lm => !landmarkNums
-            .includes(lm.data.number))
+            .filter(lm => {
+                if (!landmarkNums || !landmarkNums.includes) return true;
+                return !landmarkNums.includes(lm.data.number);
+            })
             .forEach(lm => this.deselectLandmark(lm));
     }
 

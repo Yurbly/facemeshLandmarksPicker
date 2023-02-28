@@ -12,6 +12,7 @@ export const LandmarksContextProvider = ({ children }) => {
 
     const [selectedWithSearch, setSelectedWithSearch] = useState([]);
     const [sets, setSets] = useState([]);
+    const [selectedSetId, setSelectedSetId] = useState(null);
 
     useEffect(() => {
         if (!canvasRef.current) return;
@@ -20,13 +21,20 @@ export const LandmarksContextProvider = ({ children }) => {
     }, [canvasRef.current]);
 
     //todo throttle search
-    const findLandmarks = (input) => {
+    const findLandmarksByString = (input) => {
         if (!canvasController) return;
-        const  numsToSelect = getNumbersFromCSVString(input);
-        canvasController.deselectAllBut(numsToSelect);
-        numsToSelect.forEach(v => canvasController.selectLandmarkByNumber(v));
+        deselectSet();
+        if (!input || !input.length) canvasController.deselectAllBut();
+        const numsToSelect = getNumbersFromCSVString(input);
+        selectLandmarks(numsToSelect);
         setSelectedWithSearch(numsToSelect);
     };
+
+    const selectLandmarks = (numsToSelect) => {
+        if (!canvasController) return;
+        canvasController.deselectAllBut(numsToSelect);
+        numsToSelect.forEach(v => canvasController.selectLandmarkByNumber(v));
+    }
 
     const saveSet = () => {
         const sameSet = sets.find(s => arraysHaveSameItems(s.landmarks, selectedWithSearch));
@@ -42,22 +50,38 @@ export const LandmarksContextProvider = ({ children }) => {
         setSets(sets => [...sets, newSet]);
     }
 
-    const removeSet = (num) => {
-        setSets(sets => sets.filter((s, i) => i !== num));
+    const selectSet = (id) => {
+        const selectedSet = sets.find(s => s.id === id);
+        selectLandmarks(selectedSet.landmarks);
+        setSelectedSetId(id);
+    };
+
+
+    const deselectSet = () => {
+        setSelectedSetId(null);
+        canvasController.deselectAllBut();
+    };
+
+    const removeSet = (id) => {
+        setSets(sets => sets.filter(s => s.id !== id));
     }
 
     const state = {
         canvasRef,
         sets,
+        selectedSetId,
     };
-    
+
     const funcs = {
-        findLandmarks,
+        findLandmarksByString,
         saveSet,
         removeSet,
+        selectLandmarks,
+        selectSet,
+        deselectSet,
     }
 
-    const value = { 
+    const value = {
         ...state,
         ...funcs,
     };
