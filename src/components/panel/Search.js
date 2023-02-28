@@ -5,9 +5,6 @@ import { useState } from 'react';
 
 const SearchComponent = styled(TextField)`
      width: 100%;
-     notchedOutline {
-         border-color: #53af5b !important;
-    }
  `;
 
 export const Search = () => {
@@ -15,7 +12,7 @@ export const Search = () => {
     const [search, setSearch] = useState('');
     const { findLandmarksByString, saveSet } = useLandmarksContext();
 
-    return <TextField
+    return <SearchComponent
         sx={{
             "& .MuiOutlinedInput-root.Mui-focused": {
                 "& > fieldset": {
