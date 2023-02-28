@@ -33,6 +33,9 @@ export const Panel = () => {
             onChange={(event) => {
                 search(event.target.value);
             }}
+            InputLabelProps={{ shrink: true }}
+            placeholder="1, 34, 252"
+            autoFocus
         />
     </PanelComponent>;
 }; 

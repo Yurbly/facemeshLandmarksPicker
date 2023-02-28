@@ -2,7 +2,8 @@
     "compilerOptions": {
       "checkJs": true,
       "jsx": "react-jsx",
-      "lib": ["dom"],
+      "lib": ["dom", "dom.iterable", "esnext"],
+      "skipLibCheck": true,
       "paths": {
          "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
         }
