@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import CanvasController from "../canvasController/CanvasController";
 import { getNumbersFromCSVString } from "../utils/strings";
+import { arraysHaveSameItems } from "../utils/arrays";
 
 const Context = React.createContext(null);
 
@@ -28,6 +29,10 @@ export const LandmarksContextProvider = ({ children }) => {
     };
 
     const saveSet = () => {
+        const sameSet = sets.find(s => arraysHaveSameItems(s.landmarks, selectedWithSearch));
+        if (sameSet) {
+            return alert("Same set is already present");
+        }
         const newSet = {
             id: new Date().getTime(),
             landmarks: selectedWithSearch,
