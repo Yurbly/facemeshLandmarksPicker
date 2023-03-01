@@ -187,6 +187,10 @@ class CanvasController {
             item
         });
     }
+
+    getLandmarksCount() {
+        return this.landmarks.length;
+    }
 }
 
 export default CanvasController;

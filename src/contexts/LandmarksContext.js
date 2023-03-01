@@ -26,8 +26,11 @@ export const LandmarksContextProvider = ({ children }) => {
         deselectSet();
         if (!input || !input.length) canvasController.deselectAllBut();
         const numsToSelect = getNumbersFromCSVString(input);
-        selectLandmarks(numsToSelect);
-        setSelectedWithSearch(numsToSelect);
+        const maxLandmarkNum = canvasController.getLandmarksCount();
+        const fitleredNumsToSelect = numsToSelect.filter(n => n < maxLandmarkNum);
+
+        selectLandmarks(fitleredNumsToSelect);
+        setSelectedWithSearch(fitleredNumsToSelect);
     };
 
     const selectLandmarks = (numsToSelect) => {
@@ -63,7 +66,8 @@ export const LandmarksContextProvider = ({ children }) => {
     };
 
     const removeSet = (id) => {
-        setSets(sets => sets.filter(s => s.id !== id));
+        const shouldRemove = confirm('Are you sure you want delete the set?');
+        shouldRemove && setSets(sets => sets.filter(s => s.id !== id));
     }
 
     const state = {

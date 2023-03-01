@@ -33,7 +33,7 @@ export const Search = () => {
             findLandmarksByString(value);
         }}
         InputLabelProps={{ shrink: true }}
-        placeholder="1, 34, 252"
+        placeholder="Ex.: 1, 34, 252..."
         onKeyDown={e => e.code === "Enter" && saveSet()}
         onFocus={() => findLandmarksByString(search)}
         autoFocus
