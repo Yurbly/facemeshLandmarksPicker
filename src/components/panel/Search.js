@@ -32,6 +32,7 @@ export const Search = observer(() => {
         placeholder="Ex.: 1, 34, 252..."
         onKeyDown={e => e.code === "Enter" && saveSet()}
         onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         autoFocus
     />
 }); 

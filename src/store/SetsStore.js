@@ -22,7 +22,6 @@ export class SetsStore {
         });
         reaction(() => this.searchStore.focused, focused => focused && this.deselectSet()); 
     }
-
     
     saveSet() {
         const { selectedWithSearch } = this.searchStore;
