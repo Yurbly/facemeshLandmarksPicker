@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import SetsList from './SetsList/SetsList';
 import { SaveButton } from './SaveButton';
 import { Search } from './Search';
+import { observer } from 'mobx-react-lite';
 
 const PanelComponent = styled.aside`
     position: absolute;
@@ -24,13 +25,10 @@ const Header = styled.div`
     gap: 20px;
 `;
 
-export const Panel = () => {
-
-    return <PanelComponent>
-        <Header>
-            <Search />
-            <SaveButton />
-        </Header>
-        <SetsList />
-    </PanelComponent>;
-}; 
+export const Panel = () => <PanelComponent>
+    <Header>
+        <Search />
+        <SaveButton />
+    </Header>
+    <SetsList />
+</PanelComponent>; 

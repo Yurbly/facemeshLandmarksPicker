@@ -1,5 +1,6 @@
+import { observer } from 'mobx-react-lite';
 import styled from 'styled-components';
-import { useLandmarksContext } from '../../../contexts/LandmarksContext';
+import { useSetsStore } from '../../../store/RootStore';
 import SetControls from './SetControls';
 
 const SetContainer = styled.div`
@@ -27,15 +28,14 @@ const Landmark = styled.div`
     ${props => props.selected && 'background: red;'}
 `;
 
-export const Set = ({remove, landmarks, color, visible, id}) => {
+export const Set = observer(({remove, landmarks, color, visible, id}) => {
 
-    const { selectSet, selectedSetId } = useLandmarksContext();
+    const { selectSet, selectedSetId } = useSetsStore();
     
     const selected = selectedSetId === id;
-    console.log('selected', selectedSetId);
 
 return <SetContainer selected={selected} onClick={() => selectSet(id)}>
         <LandmarksContainer>{landmarks.map(l => <Landmark key={l}>{l}</Landmark>)}</LandmarksContainer>
         <SetControls remove={remove} />
     </SetContainer>
-}
+})

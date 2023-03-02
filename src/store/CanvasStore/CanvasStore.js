@@ -1,5 +1,6 @@
+import { action, makeObservable } from "mobx";
 import Paper, { PointText, Point, Path, Size } from "paper";
-import { UVS, FACES } from '../geometryData';
+import { UVS, FACES } from '../../geometryData';
 import SelectingCircle from "./SelectingCircle";
 
 const INIT_LANDMARK_COLOR = '#00ff00';
@@ -15,24 +16,26 @@ const hitOptions = {
 
 const HOVER_SCALE = 2;
 
-class CanvasController {
+class CanvasStore {
 
     canvasDimensions;
     landmarks = [];
     faces = [];
 
-    constructor(canvas) {
-        
-        this.setupCanvas(canvas);
-        this.drawLandmarks();
-        this.drawFaces();
-
-        this.makeLandmarksHoverable();
-        
-        Paper.view.draw();
+    constructor() {
+        makeObservable(this, {
+            deselectAllBut: action.bound,
+            selectLandmarkByNumber: action.bound,
+            getLandmarksCount: action.bound,
+            initPaper: action.bound,
+        })
     }
     
-    setupCanvas(canvas) {
+    init(searchStore) {
+        this.searchStore = searchStore;
+    }
+
+    initPaper(canvas) {
         Paper.setup(canvas);
         const { width, height } = canvas.getBoundingClientRect();
         // canvas.width = height;
@@ -40,21 +43,41 @@ class CanvasController {
         // Paper.view.viewSize = new Size(height, height);
         this.canvasDimensions = { width, height };
         this.minCanvasDimension = Math.min(width, height); 
+
+        this.drawLandmarks();
+        this.drawFaces();
+
+        this.makeLandmarksHoverable();
+        this.makeLandmarksClickable();
+        
+        Paper.view.onMouseLeave = () => this.selectingCircle.deselect();
+        Paper.view.onMouseEnter = () => this.selectingCircle.deselect();
+
+        Paper.view.draw();
+
+        this.initialized = true;
     }
 
-    makeLandmarksHoverable = () => {
+    makeLandmarksHoverable() {
         this.selectingCircle = new SelectingCircle(this.minCanvasDimension);
         Paper.view.onMouseMove = (e) => {
-            const { point } = e;
-
             const closest = this.getClosestLandmark(e.point);
             if (!closest) return;
 
             const opts = { showLabel: !closest.data.selected };
             this.selectingCircle.select(closest.position, closest.data.number, opts);
         };
-        Paper.view.onMouseLeave = () => this.selectingCircle.deselect();
-        Paper.view.onMouseEnter = () => this.selectingCircle.deselect();
+        
+    }
+
+    makeLandmarksClickable() {
+        Paper.view.onClick = (e) => {
+            if (!this.searchStore) return;
+            const closest = this.getClosestLandmark(e.point);
+            if (!closest) return;
+
+            this.searchStore.addLandmarkToSearch(closest.data.number);
+        };
     }
 
     getClosestLandmark(point) {
@@ -116,14 +139,14 @@ class CanvasController {
             .forEach(lm => this.deselectLandmark(lm));
     }
 
-    drawLandmarks = () => {
+    drawLandmarks() {
         UVS.forEach((uv, i) => {
             this.drawSingleLandmark(uv[0], uv[1], i);
         });
     };
 
 
-    drawSingleLandmark = (xRel, yRel, number) => {
+    drawSingleLandmark(xRel, yRel, number) {
         const { width, height } = this.canvasDimensions;
         const x = xRel * this.minCanvasDimension;
         const y = yRel * this.minCanvasDimension;
@@ -142,7 +165,7 @@ class CanvasController {
         this.landmarks.push(landmark);
     };
 
-    addLandmarkLabel = (landmark, number) => {
+    addLandmarkLabel(landmark, number) {
         const point = landmark.position;
         const isLabelToLeft = point.x > Paper.view.size.width / 2;
         landmark.data.label = new PointText(point);
@@ -154,7 +177,7 @@ class CanvasController {
         landmark.data.number = number;
     }
 
-    drawFaces = () => {
+    drawFaces() {
         const { landmarks } = this;
         if (!landmarks.length) {
             return console.error('Landmarks are not initialized');
@@ -193,4 +216,4 @@ class CanvasController {
     }
 }
 
-export default CanvasController;
+export default CanvasStore;

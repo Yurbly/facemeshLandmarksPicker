@@ -1,8 +1,9 @@
 import { Main } from './components/Main';
-import { LandmarksContextProvider, useLandmarksContext } from './contexts/LandmarksContext';
+import { RootStoreProvider } from './store/RootStore';
 
 export const App = () => {
-    return (<LandmarksContextProvider>
-        <Main />
-    </LandmarksContextProvider>)
+    return (
+        <RootStoreProvider>
+            <Main />
+        </RootStoreProvider>)
 }; 
