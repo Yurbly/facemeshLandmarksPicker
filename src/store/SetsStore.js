@@ -1,22 +1,26 @@
 import { action, makeAutoObservable, reaction } from 'mobx';
-import {createContext, useContext} from "react";
 import { arraysHaveSameItems } from '../utils/arrays';
+import { dumpSetsToLocalStorage, getSetsFromLocalStorage } from '../utils/localStorage';
 
 export class SetsStore {
 
-    sets = [];
+    sets;
     selectedSetId;
 
     constructor(searchStore, canvasStore) {
         this.searchStore = searchStore;
         this.canvasStore = canvasStore;
+
+        const sets = getSetsFromLocalStorage();
+        this.sets = sets || [];
+
         makeAutoObservable(this, {
             saveSet: action.bound,
             selectSet: action.bound,
             deselectSet: action.bound,
             removeSet: action.bound,
         });
-        reaction(() => this.searchStore.focused, (focused) => focused && this.deselectSet()); 
+        reaction(() => this.searchStore.focused, focused => focused && this.deselectSet()); 
     }
 
     
@@ -33,6 +37,7 @@ export class SetsStore {
             visible: false,
         }
         this.sets.push(newSet);
+        dumpSetsToLocalStorage(this.sets)
     }
 
     selectSet(id) {
