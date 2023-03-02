@@ -27,15 +27,9 @@ export class SearchStore {
         const maxLandmarkNum = this.canvasStore.getLandmarksCount();
         const fitleredNumsToSelect = numsToSelect.filter(n => n < maxLandmarkNum);
 
-        this.selectLandmarks(fitleredNumsToSelect);
+        this.canvasStore.selectLandmarks(fitleredNumsToSelect);
         this.selectedWithSearch = fitleredNumsToSelect;
     };
-
-    selectLandmarks(numsToSelect) {
-        if (!this.canvasStore.initialized) return;
-        this.canvasStore.deselectAllBut(numsToSelect);
-        numsToSelect.forEach(v => this.canvasStore.selectLandmarkByNumber(v));
-    }
 
     setSearch(input) {
         this.search = input;

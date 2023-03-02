@@ -103,10 +103,10 @@ class CanvasStore {
     
     selectLandmarkByNumber(number) {
         const landmark = this.landmarks[number];
-        this.selectLandmark(landmark);
+        this.selectSingleLandmark(landmark);
     }
     
-    selectLandmark(landmark) {
+    selectSingleLandmark(landmark) {
         if (!landmark) return;
         landmark.fillColor = 'orange';
         landmark.tween(
@@ -118,6 +118,12 @@ class CanvasStore {
         landmark.data.selected = true;
         landmark.data.scaled = true;
         landmark.data.label.opacity = 1;
+    }
+
+    selectLandmarks(numsToSelect) {
+        if (!this.initialized) return;
+        this.deselectAllBut(numsToSelect);
+        numsToSelect.forEach(v => this.selectLandmarkByNumber(v));
     }
 
     deselectLandmark(landmark) {
