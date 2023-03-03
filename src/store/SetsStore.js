@@ -38,22 +38,25 @@ export class SetsStore {
         this.sets.push(newSet);
         dumpSetsToLocalStorage(this.sets)
     }
-
+    
     selectSet(id) {
         const selectedSet = this.sets.find(s => s.id === id);
         this.canvasStore.selectLandmarks(selectedSet.landmarks);
         this.selectedSetId = id;
     };
-
-
+    
+    
     deselectSet() {
         this.selectedSetId = null;
         this.canvasStore.deselectAllBut();
     };
-
+    
     removeSet(id) {
         const shouldRemove = confirm('Are you sure you want delete the set?');
-        if (shouldRemove) this.sets = this.sets.filter(s => s.id !== id);
+        if (shouldRemove) {
+            this.sets = this.sets.filter(s => s.id !== id);
+            dumpSetsToLocalStorage(this.sets)
+        }
     }
 }
 

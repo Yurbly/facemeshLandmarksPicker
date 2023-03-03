@@ -10,19 +10,22 @@ const PanelComponent = styled.aside`
     right: 0;
     background: white;
     margin: 20px;
-    padding: 10px;
-    border-radius: 6px;
+    padding: 5px 0 0;
+    border-radius: 8px;
 
     display: flex;
     flex-flow: column;
     width: 30%;
-    gap: 20px;
+
+    max-height: 90vh;
+    overflow: hidden;
 `;
 
 const Header = styled.div`
-    width: 100%;
+    max-width: 100%;
     display: flex;
-    gap: 20px;
+    gap: 10px;
+    padding: 10px;
 `;
 
 export const Panel = () => <PanelComponent>
