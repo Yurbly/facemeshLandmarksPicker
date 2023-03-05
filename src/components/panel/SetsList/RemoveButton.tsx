@@ -1,7 +1,12 @@
+import { FC } from 'react';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-export const RemoveButton = ({ onClick }) =>
+type Props = {
+    onClick(): void;   
+}
+
+export const RemoveButton: FC<Props> = ({ onClick }) =>
     <IconButton
         onClick={e => {
             e.stopPropagation();

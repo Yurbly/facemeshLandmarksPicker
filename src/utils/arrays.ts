@@ -1,4 +1,4 @@
-export const arraysHaveSameItems = (arr1, arr2) => {
+export const arraysHaveSameItems = (arr1: Array<unknown>, arr2: Array<unknown>) => {
   if (arr1.length !== arr2.length) {
     return false;
   }

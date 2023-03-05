@@ -19,6 +19,6 @@ export default observer(() => {
 
     if (!sets.length) return null;
     return <SetsContainer>
-        {sets.map((set, i) => <Set key={set.id} remove={() => removeSet(set.id)} {...set}/>)}
+        {sets.map((set, i) => <Set key={set.id.toString()} remove={() => removeSet(set.id)} {...set}/>)}
     </SetsContainer>;
 }); 

@@ -1,13 +1,23 @@
 import { action, makeAutoObservable, reaction } from 'mobx';
 import { arraysHaveSameItems } from '../utils/arrays';
 import { dumpSetsToLocalStorage, getSetsFromLocalStorage } from '../utils/localStorage';
+import { CanvasStore } from './CanvasStore/CanvasStore';
+import { SearchStore } from './SearchStore';
+
+type Set = {
+    id: number;
+    landmarks: number[];
+    color: string;
+    visible: boolean;
+};
 
 export class SetsStore {
+    canvasStore: CanvasStore;
+    searchStore: SearchStore;
+    sets: Set[];
+    selectedSetId?: number | undefined = undefined; // due to parcel inner babel configuration fields should be initialized with some value
 
-    sets;
-    selectedSetId;
-
-    constructor(searchStore, canvasStore) {
+    constructor(searchStore: SearchStore, canvasStore: CanvasStore) {
         this.searchStore = searchStore;
         this.canvasStore = canvasStore;
 
@@ -25,6 +35,7 @@ export class SetsStore {
     
     saveSet() {
         const { selectedWithSearch } = this.searchStore;
+        if (!selectedWithSearch || !selectedWithSearch.length) return;
         const sameSet = this.sets.slice().find(s => arraysHaveSameItems(s.landmarks, selectedWithSearch));
         if (sameSet) {
             return alert("Same set is already present");
@@ -39,21 +50,24 @@ export class SetsStore {
         dumpSetsToLocalStorage(this.sets)
     }
     
-    selectSet(id) {
+    selectSet(id: number) {
         const selectedSet = this.sets.find(s => s.id === id);
+        if (!selectedSet) return;
         this.canvasStore.selectLandmarks(selectedSet.landmarks);
         this.selectedSetId = id;
     };
     
     
     deselectSet() {
-        this.selectedSetId = null;
+        this.selectedSetId = undefined;
         this.canvasStore.deselectAllBut();
     };
     
-    removeSet(id) {
+    removeSet(id: number) {
         const shouldRemove = confirm('Are you sure you want delete the set?');
         if (shouldRemove) {
+            const set = this.sets.find(s => s.id === id);
+            set && this.deselectSet();
             this.sets = this.sets.filter(s => s.id !== id);
             dumpSetsToLocalStorage(this.sets)
         }

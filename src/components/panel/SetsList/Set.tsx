@@ -1,9 +1,14 @@
 import { observer } from 'mobx-react-lite';
+import { FC } from 'react';
 import styled from 'styled-components';
-import { useSetsStore } from '../../../store/RootStore';
-import SetControls from './SetControls';
+import { useRootStore, useSearchStore, useSetsStore } from '../../../store/RootStore';
+import { SetControls } from './SetControls';
 
-const SetContainer = styled.div`
+type SelectableProps = {
+    selected?: boolean;
+}
+
+const SetContainer = styled.div<SelectableProps>`
     display: flex;
     padding: 10px;
     border-radius: 6px;
@@ -19,7 +24,7 @@ const LandmarksContainer = styled.div`
     gap: 5px;
     `;
 
-const Landmark = styled.div`
+const Landmark = styled.div<SelectableProps>`
     border-radius: 4px;
     padding: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
@@ -28,13 +33,20 @@ const Landmark = styled.div`
     ${props => props.selected && 'background: red;'}
 `;
 
-export const Set = observer(({remove, landmarks, color, visible, id}) => {
+type Props = {
+    id: number;
+    remove(): void;
+    landmarks: number[];
+    color?: string;
+    visible?: boolean;
+};
+
+export const Set: FC<Props> = observer(({ remove, landmarks, color, visible, id }) => {
 
     const { selectSet, selectedSetId } = useSetsStore();
-    
     const selected = selectedSetId === id;
 
-return <SetContainer selected={selected} onClick={() => selectSet(id)}>
+    return <SetContainer selected={selected} onClick={() => selectSet(id)}>
         <LandmarksContainer>{landmarks.map(l => <Landmark key={l}>{l}</Landmark>)}</LandmarksContainer>
         <SetControls remove={remove} />
     </SetContainer>

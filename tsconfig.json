@@ -1,0 +1,36 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "outDir": "./dist",
+    "noImplicitAny": true,
+    "target": "ES6",
+    "moduleResolution": "node",
+    "checkJs": true,
+    "jsx": "react-jsx",
+    "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "paths": {
+      "@mui/styled-engine": [
+        "./node_modules/@mui/styled-engine-sc"
+      ]
+    }
+  },
+  "exclude": [
+      "node_modules",
+      "**/node_modules/*",
+      "./plugins/**/*",
+      "./typings/**/*",
+      "./built/**/*",
+      "./dist/**/*",
+      "./parcel-cache/**/*",
+      "./vs-code/**/*",
+    ]
+}

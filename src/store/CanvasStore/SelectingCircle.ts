@@ -1,7 +1,18 @@
 import Paper, { PointText, Point, Path } from "paper";
 
+export type SelectionOpts = {
+    showLabel: boolean;
+};
+
 class SelectingCircle {
-    constructor(minCanvasDimension) {
+
+    minCanvasDimension: number;
+    circle: paper.Path.Circle;
+    label: paper.PointText;
+    
+    currentHovered: number | null;
+
+    constructor(minCanvasDimension: number) {
         this.minCanvasDimension = minCanvasDimension;
         const initPoint = new Point(0, 0); 
 
@@ -18,7 +29,7 @@ class SelectingCircle {
         this.label.opacity = 0;
     }
 
-    select(point, num, opts) {
+    select(point: paper.Point, num: number, opts: SelectionOpts) {
         if (this.currentHovered === num) return;
         this.currentHovered = num;
 
@@ -33,7 +44,7 @@ class SelectingCircle {
         this.currentHovered = null;
     }
     
-    showCircle(point) {
+    showCircle(point: paper.Point) {
         this.circle.position = point;
         this.circle.opacity = 1;
         this.circle.bringToFront();
@@ -44,8 +55,8 @@ class SelectingCircle {
         this.circle.sendToBack();
     }
 
-    showLabel(point, num) {
-        this.label.content = num;
+    showLabel(point: paper.Point, num: number) {
+        this.label.content = num.toString();
         const labelWidth = this.label.bounds.width;
         const isLabelToLeft = point.x > Paper.view.size.width / 2;
         const labelX = isLabelToLeft ? point.x - labelWidth : point.x + 15;
