@@ -16,6 +16,7 @@ const hitOptions = {
 };
 
 const HOVER_SCALE = 2;
+const MIN_SELECTED_SCALE = 0.6;
 
 export type CanvasDimensions = { width: number; height: number };
 
@@ -155,7 +156,7 @@ export class CanvasStore {
             const labelScaling = lmScale / label.scaling.x;
             landmark.data.label.scale(labelScaling, landmark.position);
 
-            const selectedLmScale = lmScale * 2;
+            const selectedLmScale = this.getSelectedLmScaling();
             landmark.scaling = landmark.data.scaled ? new Point(selectedLmScale, selectedLmScale) : new Point(lmScale, lmScale);
         });
     }
@@ -192,13 +193,18 @@ export class CanvasStore {
         landmark.fillColor = 'orange';
         landmark.tween(
             { scaling: landmark.scaling },
-            { scaling: 1 / this.zoom * HOVER_SCALE },
+            { scaling: this.getSelectedLmScaling() },
             {
                 duration: 150
             });
         landmark.data.selected = true;
         landmark.data.scaled = true;
         landmark.data.label.opacity = 1;
+    }
+
+    getSelectedLmScaling() {
+        const scaling = 1 / this.zoom * HOVER_SCALE;
+        return Math.min(Math.max(MIN_SELECTED_SCALE, scaling), 1);
     }
 
     selectLandmarks(numsToSelect: number[]) {
