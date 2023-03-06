@@ -15,7 +15,7 @@ export class SetsStore {
     canvasStore: CanvasStore;
     searchStore: SearchStore;
     sets: Set[];
-    selectedSetId?: number | undefined = undefined; // due to parcel inner babel configuration fields should be initialized with some value
+    selectedSetId?: number = undefined; //todo due to babel configuration fields should be initialized with some value
 
     constructor(searchStore: SearchStore, canvasStore: CanvasStore) {
         this.searchStore = searchStore;
@@ -30,7 +30,11 @@ export class SetsStore {
             deselectSet: action.bound,
             removeSet: action.bound,
         });
-        reaction(() => this.searchStore.focused, focused => focused && this.deselectSet()); 
+        reaction(() => this.searchStore.focused, focused => {
+            console.log('focused', focused);
+            
+            return focused && this.deselectSet();
+        }); 
     }
     
     saveSet() {

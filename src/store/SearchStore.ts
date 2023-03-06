@@ -7,7 +7,7 @@ export class SearchStore {
     selectedWithSearch: number[] = [];
     search = '';
 
-    focused: boolean;
+    focused?: boolean = undefined; //todo due to babel configuration fields should be initialized with some value
 
     constructor(canvasStore: CanvasStore) {
         makeAutoObservable(this, {
