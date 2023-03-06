@@ -108,6 +108,9 @@ export class CanvasStore {
             const closest = this.getClosestLandmark(e.point);
             if (!closest) return;
 
+            if (closest.data.selected) {
+                return this.searchStore.removeLandmarkFromSearch(closest.data.number);    
+            }
             this.searchStore.addLandmarkToSearch(closest.data.number);
         };
     }

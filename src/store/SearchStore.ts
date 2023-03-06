@@ -54,6 +54,9 @@ export class SearchStore {
         if (!num || this.selectedWithSearch.includes(num)) return;
         this.search = `${this.search}${this.search ? ', ' : ''}${num}`;
     }
+
+    removeLandmarkFromSearch(num: number) {
+        if (!num || !this.selectedWithSearch.includes(num)) return;
+        this.search = this.search.split(',').filter(v => v.trim() !== num.toString()).join(',');
+    }
 }
-
-
