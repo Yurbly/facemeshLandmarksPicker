@@ -1,5 +1,5 @@
 import { action, makeObservable } from "mobx";
-import Paper, { PointText, Point, Path, Group } from "paper";
+import Paper, { PointText, Point, Path, Tool } from "paper";
 import { UVS, FACES } from '../../geometryData';
 import { SearchStore } from '../SearchStore';
 import SelectingCircle from "./SelectingCircle";
@@ -19,8 +19,6 @@ const HOVER_SCALE = 2;
 
 export type CanvasDimensions = { width: number; height: number };
 
-type SelectOptions = {};
-
 type Face = {
     landmarks: number[];
     item: paper.Path.Line;
@@ -36,6 +34,7 @@ export class CanvasStore {
     searchStore: SearchStore;
     viewInitialized: boolean;
     zoom: number = 1;
+    isDragging?: boolean = false;
 
     constructor() {
         makeObservable(this, {
@@ -68,11 +67,26 @@ export class CanvasStore {
         this.makeLandmarksHoverable();
         this.makeLandmarksClickable();
         this.initZoom(canvas);
+        this.initPan();
 
         Paper.view.onMouseLeave = () => this.selectingCircle.deselect();
         Paper.view.onMouseEnter = () => this.selectingCircle.deselect();
 
         this.viewInitialized = true;
+    }
+
+    initPan() {
+        const tool = new Tool();
+
+        tool.onMouseDrag = (event: paper.ToolEvent) => {
+            this.isDragging = true;
+            const pan_offset = event.point.subtract(event.downPoint);
+            Paper.view.center =Paper.view.center.subtract(pan_offset);
+        }
+
+        tool.onMouseUp = () => {
+            this.isDragging = false;
+        }
     }
 
     makeLandmarksHoverable() {
@@ -89,7 +103,7 @@ export class CanvasStore {
 
     makeLandmarksClickable() {
         Paper.view.onClick = (e: paper.MouseEvent) => {
-            if (!this.searchStore) return;
+            if (!this.searchStore || this.isDragging) return;
             const closest = this.getClosestLandmark(e.point);
             if (!closest) return;
 
@@ -100,7 +114,7 @@ export class CanvasStore {
     initZoom(canvas: HTMLCanvasElement) {
         canvas.addEventListener('mousewheel', (event: WheelEvent) => {
             const oldZoom = Paper.view.zoom;
-            
+
             let newZoom = Paper.view.zoom;
             if (event.deltaY > 0) {
                 if (oldZoom > 10) return;
@@ -129,7 +143,7 @@ export class CanvasStore {
             event.preventDefault();
             this.zoom = newZoom;
 
-            const lmScale = Math.max(Math.min(1, 1/newZoom), 0.2);
+            const lmScale = Math.max(Math.min(1, 1 / newZoom), 0.4);
             this.compemsateLandmarksZoom(lmScale);
             this.selectingCircle.scale(lmScale);
         })
@@ -138,14 +152,14 @@ export class CanvasStore {
     compemsateLandmarksZoom(lmScale: number) {
         this.landmarks.forEach(landmark => {
             const { label } = landmark.data;
-            const labelScaling = lmScale / label.scaling.x; 
+            const labelScaling = lmScale / label.scaling.x;
             landmark.data.label.scale(labelScaling, landmark.position);
 
             const selectedLmScale = lmScale * 2;
-            landmark.scaling = landmark.data.scaled ? new Point(selectedLmScale, selectedLmScale) : new Point(lmScale,lmScale);
+            landmark.scaling = landmark.data.scaled ? new Point(selectedLmScale, selectedLmScale) : new Point(lmScale, lmScale);
         });
     }
-    
+
     getClosestLandmark(point: paper.Point) {
         const result = Paper.project.hitTestAll(point, hitOptions);
         const landmarks = result?.filter(r => r.item.data.type === 'landmark');
@@ -199,7 +213,7 @@ export class CanvasStore {
         landmark.data.label.opacity = 0;
         if (landmark.data.scaled) {
             landmark.data.scaled = false;
-            landmark.tween({ scaling: landmark.scaling }, { scaling: 1/this.zoom }, { duration: 150 });
+            landmark.tween({ scaling: landmark.scaling }, { scaling: 1 / this.zoom }, { duration: 150 });
         }
         landmark.data.selected = false;
     }
