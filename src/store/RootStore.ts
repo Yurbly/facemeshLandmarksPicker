@@ -16,6 +16,7 @@ export class RootStore {
 
     init() {
         this.canvas.init(this.search);
+        this.search.init(this.sets);
     }
 }
 
@@ -36,13 +37,6 @@ const getStore = (name: keyof RootStore) => {
     return root[name];
 }
 
-// export const useSearchStore = () => useRootStore().search;
-// export const useSetsStore = () => useRootStore().sets;
-// export const useCanvasStore = () => {
-//     const root = useRootStore();
-//     if (!root) throw new Error('Root store is not initialized');
-//     return root.canvas;
-// };
 export const useSearchStore = () => getStore('search') as SearchStore;
 export const useSetsStore = () => getStore('sets') as SetsStore;
 export const useCanvasStore = () => getStore('canvas') as CanvasStore;

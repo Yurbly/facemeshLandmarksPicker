@@ -1,9 +1,11 @@
 import { action, makeAutoObservable, reaction } from 'mobx';
 import { getNumbersFromCSVString } from '../utils/strings';
 import { CanvasStore } from './CanvasStore/CanvasStore';
+import { SetsStore } from './SetsStore';
 
 export class SearchStore {
     canvasStore: CanvasStore;
+    setsStore: SetsStore;
     selectedWithSearch: number[] = [];
     search = '';
 
@@ -17,7 +19,14 @@ export class SearchStore {
         });
         this.canvasStore = canvasStore;
         reaction(() => this.search, search => this.findLandmarksByString(search));
-        reaction(() => this.focused, () => this.findLandmarksByString(this.search));
+        reaction(() => this.focused, focused => {
+            this.setsStore.deselectSet();
+            focused && this.findLandmarksByString(this.search);
+        });
+    }
+
+    init(setsStore: SetsStore) {
+        this.setsStore = setsStore;
     }
 
     findLandmarksByString(input: string) {

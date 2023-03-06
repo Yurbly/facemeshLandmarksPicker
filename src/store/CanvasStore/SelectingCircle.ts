@@ -70,6 +70,12 @@ class SelectingCircle {
         this.label.opacity = 0;
         this.label.sendToBack();
     }
+
+    scale(scale: number) {
+        this.circle.scaling = new Point(scale, scale);
+        const labelScaling = scale / this.label.scaling.x;
+        this.label.scale(labelScaling, this.circle.position);
+    }
 }
 
 export default SelectingCircle;

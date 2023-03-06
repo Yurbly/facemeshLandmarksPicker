@@ -30,7 +30,6 @@ export class SetsStore {
             deselectSet: action.bound,
             removeSet: action.bound,
         });
-        reaction(() => this.searchStore.focused, focused => focused && this.deselectSet()); 
     }
     
     saveSet() {

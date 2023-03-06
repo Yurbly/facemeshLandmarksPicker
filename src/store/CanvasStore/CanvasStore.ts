@@ -1,5 +1,5 @@
 import { action, makeObservable } from "mobx";
-import Paper, { PointText, Point, Path, Size } from "paper";
+import Paper, { PointText, Point, Path, Group } from "paper";
 import { UVS, FACES } from '../../geometryData';
 import { SearchStore } from '../SearchStore';
 import SelectingCircle from "./SelectingCircle";
@@ -35,6 +35,7 @@ export class CanvasStore {
     faces: Face[] = [];
     searchStore: SearchStore;
     viewInitialized: boolean;
+    zoom: number = 1;
 
     constructor() {
         makeObservable(this, {
@@ -50,6 +51,9 @@ export class CanvasStore {
     }
 
     initPaper(canvas: HTMLCanvasElement) {
+
+        Paper.project = new Paper.Project(canvas);
+
         Paper.setup(canvas);
         const { width, height } = canvas.getBoundingClientRect();
         // canvas.width = height;
@@ -63,6 +67,7 @@ export class CanvasStore {
 
         this.makeLandmarksHoverable();
         this.makeLandmarksClickable();
+        this.initZoom(canvas);
 
         Paper.view.onMouseLeave = () => this.selectingCircle.deselect();
         Paper.view.onMouseEnter = () => this.selectingCircle.deselect();
@@ -92,6 +97,55 @@ export class CanvasStore {
         };
     }
 
+    initZoom(canvas: HTMLCanvasElement) {
+        canvas.addEventListener('mousewheel', (event: WheelEvent) => {
+            const oldZoom = Paper.view.zoom;
+            
+            let newZoom = Paper.view.zoom;
+            if (event.deltaY > 0) {
+                if (oldZoom > 10) return;
+                newZoom = oldZoom * 1.05;
+            } else {
+                if (oldZoom < 0.5) return;
+                newZoom = oldZoom * 0.95;
+            }
+
+            const zoomRatio = oldZoom / newZoom;
+
+            const mousePosition = new Point(event.offsetX, event.offsetY);
+
+            //viewToProject: gives the coordinates in the Project space from the Screen Coordinates
+            const viewPosition = Paper.view.viewToProject(mousePosition);
+
+            const mpos = viewPosition;
+            const ctr = Paper.view.center;
+
+            const pc = mpos.subtract(ctr);
+            const offset = mpos.subtract(pc.multiply(zoomRatio)).subtract(ctr);
+
+            Paper.view.zoom = newZoom;
+            Paper.view.center = Paper.view.center.add(offset);
+
+            event.preventDefault();
+            this.zoom = newZoom;
+
+            const lmScale = Math.max(Math.min(1, 1/newZoom), 0.2);
+            this.compemsateLandmarksZoom(lmScale);
+            this.selectingCircle.scale(lmScale);
+        })
+    }
+
+    compemsateLandmarksZoom(lmScale: number) {
+        this.landmarks.forEach(landmark => {
+            const { label } = landmark.data;
+            const labelScaling = lmScale / label.scaling.x; 
+            landmark.data.label.scale(labelScaling, landmark.position);
+
+            const selectedLmScale = lmScale * 2;
+            landmark.scaling = landmark.data.scaled ? new Point(selectedLmScale, selectedLmScale) : new Point(lmScale,lmScale);
+        });
+    }
+    
     getClosestLandmark(point: paper.Point) {
         const result = Paper.project.hitTestAll(point, hitOptions);
         const landmarks = result?.filter(r => r.item.data.type === 'landmark');
@@ -105,7 +159,7 @@ export class CanvasStore {
             if (!closest) closest = l.item as paper.Path.Circle;
             const dist = point.getDistance(l.item.position);
             if (!minDist || dist < minDist) {
-                closest = l.item as paper.Path.Circle;                ;
+                closest = l.item as paper.Path.Circle;
                 minDist = dist;
             }
         });
@@ -124,7 +178,7 @@ export class CanvasStore {
         landmark.fillColor = 'orange';
         landmark.tween(
             { scaling: landmark.scaling },
-            { scaling: HOVER_SCALE },
+            { scaling: 1 / this.zoom * HOVER_SCALE },
             {
                 duration: 150
             });
@@ -145,7 +199,7 @@ export class CanvasStore {
         landmark.data.label.opacity = 0;
         if (landmark.data.scaled) {
             landmark.data.scaled = false;
-            landmark.tween({ scaling: landmark.scaling }, { scaling: 1 }, { duration: 150 });
+            landmark.tween({ scaling: landmark.scaling }, { scaling: 1/this.zoom }, { duration: 150 });
         }
         landmark.data.selected = false;
     }
@@ -164,7 +218,6 @@ export class CanvasStore {
             this.drawSingleLandmark(uv[0], uv[1], i);
         });
     };
-
 
     drawSingleLandmark(xRel: number, yRel: number, num: number) {
         const { width, height } = this.canvasDimensions;
@@ -189,12 +242,13 @@ export class CanvasStore {
     addLandmarkLabel(landmark: paper.Path.Circle, num: number) {
         const point = landmark.position;
         const isLabelToLeft = point.x > Paper.view.size.width / 2;
-        landmark.data.label = new PointText(point);
-        landmark.data.label.content = num;
-        const labelWidth = landmark.data.label.bounds.width;
+        const label = new PointText(point);
+        label.content = num.toString();
+        const labelWidth = label.bounds.width;
         const labelX = isLabelToLeft ? point.x - labelWidth : point.x + 15;
-        landmark.data.label.position.x = labelX;
-        landmark.data.label.opacity = 0;
+        label.position.x = labelX;
+        label.opacity = 0;
+        landmark.data.label = label;
         landmark.data.number = num;
     }
 
