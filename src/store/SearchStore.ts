@@ -31,7 +31,11 @@ export class SearchStore {
 
     findLandmarksByString(input: string) {
         if (!this.canvasStore.viewInitialized) return;
-        if (!input || !input.length) return this.canvasStore.deselectAllBut();
+        if (!input || !input.length) {
+            this.selectedWithSearch = [];
+            this.canvasStore.deselectAllBut();
+            return 
+        }
         const numsToSelect = getNumbersFromCSVString(input);
         const maxLandmarkNum = this.canvasStore.getLandmarksCount();
         const fitleredNumsToSelect = numsToSelect

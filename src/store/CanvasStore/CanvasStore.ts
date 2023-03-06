@@ -17,6 +17,7 @@ const hitOptions = {
 
 const HOVER_SCALE = 2;
 const MIN_SELECTED_SCALE = 0.6;
+const MIN_UNSELECTED_SCALE = 0.4;
 
 export type CanvasDimensions = { width: number; height: number };
 
@@ -34,7 +35,6 @@ export class CanvasStore {
     faces: Face[] = [];
     searchStore: SearchStore;
     viewInitialized: boolean;
-    zoom: number = 1;
     isDragging?: boolean = false;
 
     constructor() {
@@ -145,9 +145,8 @@ export class CanvasStore {
             Paper.view.center = Paper.view.center.add(offset);
 
             event.preventDefault();
-            this.zoom = newZoom;
 
-            const lmScale = Math.max(Math.min(1, 1 / newZoom), 0.4);
+            const lmScale = this.getUnselectedLmScaling();
             this.compemsateLandmarksZoom(lmScale);
             this.selectingCircle.scale(lmScale);
         })
@@ -206,8 +205,13 @@ export class CanvasStore {
     }
 
     getSelectedLmScaling() {
-        const scaling = 1 / this.zoom * HOVER_SCALE;
-        return Math.min(Math.max(MIN_SELECTED_SCALE, scaling), 1);
+        const scaling = 1 / Paper.view.zoom * HOVER_SCALE;
+        return Math.min(2, Math.max(MIN_SELECTED_SCALE, scaling));
+    }
+
+    getUnselectedLmScaling() {
+        const scaling = 1 / Paper.view.zoom;
+        return Math.min(1, Math.max(MIN_UNSELECTED_SCALE, scaling));
     }
 
     selectLandmarks(numsToSelect: number[]) {
@@ -222,7 +226,7 @@ export class CanvasStore {
         landmark.data.label.opacity = 0;
         if (landmark.data.scaled) {
             landmark.data.scaled = false;
-            landmark.tween({ scaling: landmark.scaling }, { scaling: 1 / this.zoom }, { duration: 150 });
+            landmark.tween({ scaling: landmark.scaling }, { scaling: this.getUnselectedLmScaling() }, { duration: 150 });
         }
         landmark.data.selected = false;
     }
