@@ -4,6 +4,9 @@
   "description": "A UI tool for working with facemesh landmarks: get position, pick a list, visualize area ",
   "main": "index.js",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "build": "webpack",
     "dev": "webpack serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,9 +25,10 @@
   "bugs": {
     "url": "https://github.com/Yurbly/facemeshLandmarksPicker/issues"
   },
-  "homepage": "https://github.com/Yurbly/facemeshLandmarksPicker#readme",
+  "homepage": "https://facemeshLandmarksPicker.github.com",
   "devDependencies": {
     "@babel/core": "^7.21.0",
+    "gh-pages": "^5.0.0",
     "html-webpack-plugin": "^5.5.0",
     "process": "^0.11.10",
     "typescript": "^4.9.5",
