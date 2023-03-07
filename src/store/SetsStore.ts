@@ -30,6 +30,7 @@ export class SetsStore {
             deselectSet: action.bound,
             removeSet: action.bound,
             removeLandmark: action.bound,
+            copySet: action.bound,
         });
     }
     
@@ -72,11 +73,17 @@ export class SetsStore {
             dumpSetsToLocalStorage(this.sets)
         }
     }
-
+    
     removeLandmark(setId: number, landmark: number) {
         const setIndex = this.sets.findIndex(s => s.id === setId);
         if (this.sets[setIndex].landmarks.length === 1) return this.removeSet(this.sets[setIndex].id);
         this.sets[setIndex].landmarks = this.sets[setIndex].landmarks.filter(l => l !== landmark);
+    }
+    
+    copySet(id: number) {
+        const set = this.sets.find(s => s.id === id);
+        if (!set) return;
+        navigator.clipboard.writeText(set?.landmarks.join(', '));
     }
 }
 

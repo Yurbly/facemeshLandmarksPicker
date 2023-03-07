@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
+import { CopyButton } from './CopyButton';
 import { RemoveButton } from './RemoveButton';
 
 const SetControlsComponent = styled.div`
@@ -7,7 +8,12 @@ const SetControlsComponent = styled.div`
 `;
 
 type Props = {
-    remove(): void;   
+    remove(): void;
+    copy(): void;
 };
 
-export const SetControls: FC<Props> = ({remove}) => <SetControlsComponent><RemoveButton onClick={remove} /></SetControlsComponent>; 
+export const SetControls: FC<Props> = ({ remove, copy }) =>
+    <SetControlsComponent>
+        <CopyButton onClick={copy} />
+        <RemoveButton onClick={remove} />
+    </SetControlsComponent>; 

@@ -27,21 +27,23 @@ const LandmarksContainer = styled.div`
 
 type Props = {
     id: number;
-    remove(): void;
     landmarks: number[];
     color?: string;
     visible?: boolean;
 };
 
-export const Set: FC<Props> = observer(({ remove, landmarks, color, visible, id }) => {
+export const Set: FC<Props> = observer(({ landmarks, color, visible, id }) => {
 
-    const { selectSet, selectedSetId, removeLandmark } = useSetsStore();
+    const { selectSet, selectedSetId, removeLandmark, removeSet, copySet } = useSetsStore();
     const selected = selectedSetId === id;
 
     return <SetContainer selected={selected} onClick={() => selectSet(id)}>
         <LandmarksContainer>
             {landmarks.map(l => <Landmark key={l} value={l} removeLandmark={() => removeLandmark(id, l)} />)}
         </LandmarksContainer>
-        <SetControls remove={remove} />
+        <SetControls
+            copy={() => copySet(id)} 
+            remove={() => removeSet(id)}
+        />
     </SetContainer>
 })

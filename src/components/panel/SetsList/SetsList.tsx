@@ -15,10 +15,10 @@ const SetsContainer = styled.div`
 
 export default observer(() => {
 
-    const { sets, removeSet } = useSetsStore();
+    const { sets } = useSetsStore();
 
     if (!sets.length) return null;
     return <SetsContainer>
-        {sets.map((set, i) => <Set key={set.id.toString()} remove={() => removeSet(set.id)} {...set}/>)}
+        {sets.map((set, i) => <Set key={set.id.toString()} {...set} />)}
     </SetsContainer>;
 }); 
