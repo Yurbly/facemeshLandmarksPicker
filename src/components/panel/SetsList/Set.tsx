@@ -1,7 +1,8 @@
 import { observer } from 'mobx-react-lite';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { useRootStore, useSearchStore, useSetsStore } from '../../../store/RootStore';
+import { useSetsStore } from '../../../store/RootStore';
+import { Landmark } from './Landmark';
 import { SetControls } from './SetControls';
 
 type SelectableProps = {
@@ -24,15 +25,6 @@ const LandmarksContainer = styled.div`
     gap: 5px;
     `;
 
-const Landmark = styled.div<SelectableProps>`
-    border-radius: 4px;
-    padding: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    height: fit-content;
-    ${props => props.selected && 'background: red;'}
-`;
-
 type Props = {
     id: number;
     remove(): void;
@@ -43,11 +35,13 @@ type Props = {
 
 export const Set: FC<Props> = observer(({ remove, landmarks, color, visible, id }) => {
 
-    const { selectSet, selectedSetId } = useSetsStore();
+    const { selectSet, selectedSetId, removeLandmark } = useSetsStore();
     const selected = selectedSetId === id;
 
     return <SetContainer selected={selected} onClick={() => selectSet(id)}>
-        <LandmarksContainer>{landmarks.map(l => <Landmark key={l}>{l}</Landmark>)}</LandmarksContainer>
+        <LandmarksContainer>
+            {landmarks.map(l => <Landmark key={l} value={l} removeLandmark={() => removeLandmark(id, l)} />)}
+        </LandmarksContainer>
         <SetControls remove={remove} />
     </SetContainer>
 })
