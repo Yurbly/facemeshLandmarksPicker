@@ -6,6 +6,7 @@ import { useCanvasStore } from '../../store/RootStore';
 const CanvasComponent = styled.canvas<{ resize: string }>`
   background-color: ${BACKGROUND_COLOR};
   height: 100vh;
+  width: 100vw;
 `;
 
 const Canvas = (props: HTMLAttributes<HTMLCanvasElement>) => {

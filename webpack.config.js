@@ -9,7 +9,7 @@ module.exports = {
       directory: path.join(__dirname, 'public'),
     },
     compress: true,
-    port: 1235,
+    port: 1234,
   },
   module: {
     rules: [

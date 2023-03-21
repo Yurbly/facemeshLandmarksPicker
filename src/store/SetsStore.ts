@@ -31,6 +31,7 @@ export class SetsStore {
             removeSet: action.bound,
             removeLandmark: action.bound,
             copySet: action.bound,
+            addSearchedLandmarksToSet: action.bound,
         });
     }
     
@@ -84,6 +85,20 @@ export class SetsStore {
         const set = this.sets.find(s => s.id === id);
         if (!set) return;
         navigator.clipboard.writeText(set?.landmarks.join(', '));
+    }
+    
+    addSearchedLandmarksToSet(id: number) {
+        const { selectedWithSearch } = this.searchStore;
+        if (!selectedWithSearch || !selectedWithSearch.length) return;
+        const set = this.sets.find(s => s.id === id);
+        if (!set) return;
+        set.landmarks.push(...selectedWithSearch);
+        this.searchStore.resetEditionSearch();
+    }
+
+    
+    getSelectedSet() {
+        return this.sets.find(s => s.id === this.selectedSetId);
     }
 }
 
