@@ -74,6 +74,7 @@ export class CanvasStore {
         Paper.view.onMouseEnter = () => this.selectingCircle.deselect();
 
         this.viewInitialized = true;
+        Paper.view.center = new Point(canvas.width * 0.31, Paper.view.center.y) ;
     }
 
     initPan() {
@@ -82,7 +83,7 @@ export class CanvasStore {
         tool.onMouseDrag = (event: paper.ToolEvent) => {
             this.isDragging = true;
             const pan_offset = event.point.subtract(event.downPoint);
-            Paper.view.center =Paper.view.center.subtract(pan_offset);
+            Paper.view.center = Paper.view.center.subtract(pan_offset);
         }
 
         tool.onMouseUp = () => {
