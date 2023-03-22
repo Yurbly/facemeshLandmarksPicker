@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { BACKGROUND_COLOR } from '../consts/colors';
 import Canvas from './canvas/Canvas';
+import { Info } from './info/Info';
 import { Panel } from './panel/Panel';
 
 const MainComponent = styled.main`
@@ -16,6 +17,7 @@ export const Main = () => {
         <MainComponent>
             <Canvas />
             <Panel />
+            <Info />
         </MainComponent>
     )
 }; 
