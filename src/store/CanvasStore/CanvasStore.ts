@@ -121,7 +121,7 @@ export class CanvasStore {
             const oldZoom = Paper.view.zoom;
 
             let newZoom = Paper.view.zoom;
-            if (event.deltaY > 0) {
+            if (event.deltaY < 0) {
                 if (oldZoom > 10) return;
                 newZoom = oldZoom * 1.05;
             } else {
