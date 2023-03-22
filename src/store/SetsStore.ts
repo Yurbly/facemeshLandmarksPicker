@@ -16,6 +16,7 @@ export class SetsStore {
     searchStore: SearchStore;
     sets: Set[];
     selectedSetId?: number = undefined; //todo due to babel configuration fields should be initialized with some value
+    isLandmarksAdditionMode = false;
 
     constructor(searchStore: SearchStore, canvasStore: CanvasStore) {
         this.searchStore = searchStore;
@@ -32,6 +33,9 @@ export class SetsStore {
             removeLandmark: action.bound,
             copySet: action.bound,
             addSearchedLandmarksToSet: action.bound,
+            setIsLandmarksAdditionMode: action.bound,
+            addLandmarkToSelectedSet: action.bound,
+            removeLandmarkFromSelectedSet: action.bound,
         });
     }
     
@@ -57,8 +61,8 @@ export class SetsStore {
         if (!selectedSet) return;
         this.canvasStore.selectLandmarks(selectedSet.landmarks);
         this.selectedSetId = id;
-    };
-    
+        this.searchStore.resetEditionSearch();
+    };   
     
     deselectSet() {
         this.selectedSetId = undefined;
@@ -92,13 +96,36 @@ export class SetsStore {
         if (!selectedWithSearch || !selectedWithSearch.length) return;
         const set = this.sets.find(s => s.id === id);
         if (!set) return;
-        set.landmarks.push(...selectedWithSearch);
+
+        const filtered = selectedWithSearch.filter(l => !set.landmarks.includes(l));
+
+        set.landmarks.push(...filtered);
         this.searchStore.resetEditionSearch();
     }
 
+    addLandmarkToSelectedSet(landmark: number) {
+        const set = this.sets.find(s => s.id === this.selectedSetId);
+        if (!set) return;
+        set.landmarks.push(landmark);
+        this.canvasStore.selectLandmarks(set.landmarks);
+    }
+
+    removeLandmarkFromSelectedSet(landmark: number) {
+        const set = this.sets.find(s => s.id === this.selectedSetId);
+        if (!set) return;
+        const index = set.landmarks.findIndex(l => l === landmark);
+        set.landmarks.splice(index, 1);
+        console.log(set.landmarks.slice());
+        
+        this.canvasStore.selectLandmarks(set.landmarks);
+    }
     
     getSelectedSet() {
         return this.sets.find(s => s.id === this.selectedSetId);
+    }
+
+    setIsLandmarksAdditionMode(value: boolean) {
+        this.isLandmarksAdditionMode = value
     }
 }
 

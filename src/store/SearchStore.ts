@@ -67,12 +67,27 @@ export class SearchStore {
 
     addLandmarkToSearch(num: number) {
         if (!num || this.selectedWithSearch.includes(num)) return;
-        this.search = `${this.search}${this.search ? ', ' : ''}${num}`;
+        if (this.setsStore.selectedSetId) {
+            if (this.setsStore.isLandmarksAdditionMode) {
+                this.editionSearch = `${this.editionSearch}${this.editionSearch ? ', ' : ''}${num}`;
+            } else {
+                this.setsStore.addLandmarkToSelectedSet(num);
+            }
+        } else {
+            this.search = `${this.search}${this.search ? ', ' : ''}${num}`;
+        }
     }
 
     removeLandmarkFromSearch(num: number) {
-        if (!num || !this.selectedWithSearch.includes(num)) return;
-        this.search = this.search.split(',').filter(v => v.trim() !== num.toString()).join(',');
+        if (this.setsStore.selectedSetId) {
+            if (this.setsStore.isLandmarksAdditionMode) {
+                this.editionSearch = this.editionSearch.split(',').filter(v => v.trim() !== num.toString()).join(',');
+            } else {
+                this.setsStore.removeLandmarkFromSelectedSet(num);
+            }
+        } else {
+            this.search = this.search.split(',').filter(v => v.trim() !== num.toString()).join(',');
+        }
     }
 
     resetEditionSearch() {

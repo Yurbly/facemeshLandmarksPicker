@@ -41,15 +41,23 @@ type Props = {
 
 export const Set: FC<Props> = observer(({ landmarks, color, visible, id }) => {
 
-    const [isLandmarksAdditionMode, setIsLandmarksAdditionMode] = useState<boolean>(false);
     const { editionSearch, setEditionSearch } = useSearchStore();
-    const { selectSet, selectedSetId, removeLandmark, removeSet, copySet, addSearchedLandmarksToSet } = useSetsStore();
+    const { 
+        selectSet, 
+        selectedSetId, 
+        removeLandmark, 
+        removeSet, 
+        copySet, 
+        addSearchedLandmarksToSet,
+        isLandmarksAdditionMode,
+        setIsLandmarksAdditionMode, 
+    } = useSetsStore();
     const selected = selectedSetId === id;
 
     return <SetContainer selected={selected} onClick={() => selectSet(id)}>
         <LandmarksContainer>
             {landmarks.map(l => <Landmark key={l} value={l} removeLandmark={() => removeLandmark(id, l)} />)}
-            {isLandmarksAdditionMode && <LandmarksSearch
+            {selected && isLandmarksAdditionMode && <LandmarksSearch
                 sx={{
                     "& .MuiOutlinedInput-root.Mui-focused": {
                         "& > fieldset": {
