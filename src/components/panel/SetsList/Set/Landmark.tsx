@@ -14,16 +14,16 @@ const LandmarkStyled = styled.div`
 `;
 
 type RemoveButtonProps = {
-    visible?: boolean;
+    $visible?: boolean;
 };
 
-const RemoveButton = styled(IconButton) <RemoveButtonProps>`
+const RemoveButton = styled(IconButton)<RemoveButtonProps>`
     position: absolute !important;
     top: 0 !important;
     right: 0 !important;
     padding: 0 !important;
     transform: translate(50%, -50%);
-    ${props => !props.visible && 'display: none !important;'}
+    ${props => !props.$visible && 'display: none !important;'}
     >svg {
         width: 14px;
         height: 14px;
@@ -39,6 +39,6 @@ export const Landmark: FC<Props> = observer(({ value, removeLandmark }) => {
     const [rmButtonVisible, setRmButtonVisible] = useState<boolean>(false);
     return <LandmarkStyled onMouseEnter={() => setRmButtonVisible(true)} onMouseLeave={() => setRmButtonVisible(false)} >
         {value}
-        <RemoveButton onClick={removeLandmark} visible={rmButtonVisible}><CancelIcon /></RemoveButton>
+        <RemoveButton onClick={removeLandmark} $visible={rmButtonVisible}><CancelIcon /></RemoveButton>
     </LandmarkStyled>
 })

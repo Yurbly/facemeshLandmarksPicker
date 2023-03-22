@@ -118,8 +118,6 @@ export class SetsStore {
         if (!set) return;
         const index = set.landmarks.findIndex(l => l === landmark);
         set.landmarks.splice(index, 1);
-        console.log(set.landmarks.slice());
-        
         this.canvasStore.selectLandmarks(set.landmarks);
     }
     
