@@ -1,4 +1,4 @@
-import { action, makeAutoObservable } from 'mobx';
+import { action, makeAutoObservable, reaction } from 'mobx';
 import { arraysHaveSameItems } from '../utils/arrays';
 import { dumpSetsToLocalStorage, getSetsFromLocalStorage } from '../utils/localStorage';
 import { CanvasStore } from './CanvasStore/CanvasStore';
@@ -37,6 +37,7 @@ export class SetsStore {
             addLandmarkToSelectedSet: action.bound,
             removeLandmarkFromSelectedSet: action.bound,
         });
+        reaction(() => this.sets.map(s => ({...s, landmarks: [...s.landmarks]})), sets => dumpSetsToLocalStorage(sets));
     }
     
     saveSet() {
@@ -53,7 +54,6 @@ export class SetsStore {
             visible: false,
         }
         this.sets.unshift(newSet);
-        dumpSetsToLocalStorage(this.sets)
     }
     
     selectSet(id: number) {
@@ -78,7 +78,6 @@ export class SetsStore {
             const set = this.sets.find(s => s.id === id);
             set && this.deselectSet();
             this.sets = this.sets.filter(s => s.id !== id);
-            dumpSetsToLocalStorage(this.sets)
         }
     }
     
