@@ -52,7 +52,7 @@ export class SetsStore {
             color: 'blue',
             visible: false,
         }
-        this.sets.push(newSet);
+        this.sets.unshift(newSet);
         dumpSetsToLocalStorage(this.sets)
     }
     
