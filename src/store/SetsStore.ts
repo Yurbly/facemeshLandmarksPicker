@@ -59,9 +59,12 @@ export class SetsStore {
     selectSet(id: number) {
         const selectedSet = this.sets.find(s => s.id === id);
         if (!selectedSet) return;
+        if (this.selectedSetId !== id) {
+            this.setIsLandmarksAdditionMode(false);
+            this.searchStore.resetEditionSearch();
+        }
         this.canvasStore.selectLandmarks(selectedSet.landmarks);
         this.selectedSetId = id;
-        this.searchStore.resetEditionSearch();
     };   
     
     deselectSet() {

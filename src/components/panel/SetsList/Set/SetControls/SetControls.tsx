@@ -6,6 +6,8 @@ import { RemoveButton } from './RemoveButton';
 
 const SetControlsComponent = styled.div`
     justify-self: flex-end;
+    flex: 1;
+    max-width: fit-content;
 `;
 
 type Props = {

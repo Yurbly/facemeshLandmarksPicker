@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { useRootStore, useSearchStore, useSetsStore } from '../../../store/RootStore';
 import { IconButton } from '@mui/material';
 
 const LandmarkStyled = styled.div`

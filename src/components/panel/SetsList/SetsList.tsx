@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import styled from 'styled-components';
 import { useSetsStore } from '../../../store/RootStore';
-import { Set } from "./Set";
+import { Set } from "./Set/Set";
 
 const SetsContainer = styled.div`
     border-radius: 6px;
@@ -11,6 +11,7 @@ const SetsContainer = styled.div`
     gap: 10px;
     padding: 10px;
     overflow: auto;
+    max-width: 100%;
 `;
 
 export default observer(() => {
