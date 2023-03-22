@@ -7,5 +7,5 @@ export const SaveButton = observer(() => {
 
     const { saveSet } = useSetsStore();
 
-    return <IconButton onClick={saveSet}><SaveIcon /></IconButton>
+    return <IconButton title="Save landmarks set" onClick={saveSet}><SaveIcon /></IconButton>
 }); 

@@ -8,6 +8,7 @@ type Props = {
 
 export const RemoveButton: FC<Props> = ({ onClick }) =>
     <IconButton
+        title="Remove set"
         onClick={e => {
             e.stopPropagation();
             return onClick();

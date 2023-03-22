@@ -39,6 +39,12 @@ export const Landmark: FC<Props> = observer(({ value, removeLandmark }) => {
     const [rmButtonVisible, setRmButtonVisible] = useState<boolean>(false);
     return <LandmarkStyled onMouseEnter={() => setRmButtonVisible(true)} onMouseLeave={() => setRmButtonVisible(false)} >
         {value}
-        <RemoveButton onClick={removeLandmark} $visible={rmButtonVisible}><CancelIcon /></RemoveButton>
+        <RemoveButton 
+            title="Remove landmark"
+            onClick={removeLandmark}
+            $visible={rmButtonVisible}
+        >
+            <CancelIcon />
+        </RemoveButton>
     </LandmarkStyled>
 })

@@ -8,6 +8,7 @@ type Props = {
 
 export const CopyButton: FC<Props> = ({ onClick }) =>
     <IconButton
+        title="Copy landmarks to clipboard"
         onClick={e => {
             e.stopPropagation();
             return onClick();

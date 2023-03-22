@@ -8,6 +8,7 @@ type Props = {
 
 export const AddButton: FC<Props> = ({ onClick }) =>
     <IconButton
+        title="Add landmarks"
         onClick={e => {
             e.stopPropagation();
             return onClick();
