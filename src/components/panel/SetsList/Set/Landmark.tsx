@@ -3,6 +3,7 @@ import { FC, useState } from 'react';
 import styled from 'styled-components';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { IconButton } from '@mui/material';
+import { useCanvasStore } from '../../../../store/RootStore';
 
 const LandmarkStyled = styled.div`
     border-radius: 4px;
@@ -37,7 +38,19 @@ type Props = {
 
 export const Landmark: FC<Props> = observer(({ value, removeLandmark }) => {
     const [rmButtonVisible, setRmButtonVisible] = useState<boolean>(false);
-    return <LandmarkStyled onMouseEnter={() => setRmButtonVisible(true)} onMouseLeave={() => setRmButtonVisible(false)} >
+    const { highlightLandmark, dehighlightLandmark } = useCanvasStore();
+
+    const onMouseEnter = () => {
+        highlightLandmark(value);
+        setRmButtonVisible(true);
+    };
+
+    const onMouseLeave = () => {
+        setRmButtonVisible(false);  
+        dehighlightLandmark(); 
+    };
+
+    return <LandmarkStyled onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} >
         {value}
         <RemoveButton 
             title="Remove landmark"

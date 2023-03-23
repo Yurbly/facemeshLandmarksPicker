@@ -2,7 +2,7 @@ import { action, makeObservable } from "mobx";
 import Paper, { PointText, Point, Path, Tool } from "paper";
 import { UVS, FACES } from '../../geometryData';
 import { SearchStore } from '../SearchStore';
-import SelectingCircle from "./SelectingCircle";
+import HighlightingCircle from "./SelectingCircle";
 
 const INIT_LANDMARK_COLOR = '#00ff00';
 const HOVER_TOLERANCE = 10;
@@ -30,7 +30,7 @@ export class CanvasStore {
 
     minCanvasDimension: number;
     canvasDimensions: CanvasDimensions;
-    selectingCircle: SelectingCircle;
+    highlightingCircle: HighlightingCircle;
     landmarks: paper.Path.Circle[] = [];
     faces: Face[] = [];
     searchStore: SearchStore;
@@ -43,6 +43,8 @@ export class CanvasStore {
             selectLandmarkByNumber: action.bound,
             getLandmarksCount: action.bound,
             initPaper: action.bound,
+            highlightLandmark: action.bound,
+            dehighlightLandmark: action.bound,
         })
     }
 
@@ -61,6 +63,7 @@ export class CanvasStore {
         // Paper.view.viewSize = new Size(height, height);
         this.canvasDimensions = { width, height };
         this.minCanvasDimension = Math.min(width, height);
+        this.highlightingCircle = new HighlightingCircle(this.minCanvasDimension);
 
         this.drawLandmarks();
         this.drawFaces();
@@ -70,7 +73,7 @@ export class CanvasStore {
         this.initZoom(canvas);
         this.initPan();
 
-        Paper.view.onMouseLeave = () => this.selectingCircle.deselect();
+        Paper.view.onMouseLeave = () => this.highlightingCircle.dehighlight();
 
         this.viewInitialized = true;
         Paper.view.center = new Point(canvas.width * 0.31, Paper.view.center.y) ;
@@ -91,13 +94,12 @@ export class CanvasStore {
     }
 
     makeLandmarksHoverable() {
-        this.selectingCircle = new SelectingCircle(this.minCanvasDimension);
         Paper.view.onMouseMove = (e: paper.MouseEvent) => {
             const closest = this.getClosestLandmark(e.point);
             if (!closest) return;
 
             const opts = { showLabel: true };
-            this.selectingCircle.select(closest.position, closest.data.number, opts);
+            this.highlightingCircle.highlight(closest.position, closest.data.number, opts);
         };
     }
 
@@ -147,7 +149,7 @@ export class CanvasStore {
 
             const lmScale = this.getUnselectedLmScaling();
             this.compemsateLandmarksZoom(lmScale);
-            this.selectingCircle.scale(lmScale);
+            this.highlightingCircle.scale(lmScale);
         })
     }
 
@@ -200,7 +202,6 @@ export class CanvasStore {
             });
         landmark.data.selected = true;
         landmark.data.scaled = true;
-        // landmark.data.label.opacity = 1; //left here for case if we will need to show all labels
     }
 
     getSelectedLmScaling() {
@@ -311,6 +312,17 @@ export class CanvasStore {
             landmarks: [num1, num2],
             item
         });
+    }
+
+    highlightLandmark(num: number) {
+        const landmark = this.landmarks.find(l => l.data.number === num);
+        if (!landmark) return;
+        const opts = { showLabel: true };
+        this.highlightingCircle.highlight(landmark.position, num, opts);
+    }
+
+    dehighlightLandmark() {
+        this.highlightingCircle.dehighlight();
     }
 
     getLandmarksCount() {

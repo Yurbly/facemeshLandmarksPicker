@@ -4,7 +4,7 @@ export type SelectionOpts = {
     showLabel: boolean;
 };
 
-class SelectingCircle {
+class HighlightingCircle {
 
     minCanvasDimension: number;
     circle: paper.Path.Circle;
@@ -38,7 +38,7 @@ class SelectingCircle {
         this.label.insertAbove(this.labelBg);
     }
 
-    select(point: paper.Point, num: number, opts: SelectionOpts) {
+    highlight(point: paper.Point, num: number, opts: SelectionOpts) {
         if (this.currentHovered === num) return;
         this.currentHovered = num;
 
@@ -47,7 +47,7 @@ class SelectingCircle {
         opts.showLabel && this.showLabel(point, num);
     }
 
-    deselect() {
+    dehighlight() {
         this.hideCircle();
         this.hideLabel();
         this.currentHovered = null;
@@ -95,4 +95,4 @@ class SelectingCircle {
     }
 }
 
-export default SelectingCircle;
+export default HighlightingCircle;
