@@ -97,10 +97,9 @@ export class CanvasStore {
             const closest = this.getClosestLandmark(e.point);
             if (!closest) return;
 
-            const opts = { showLabel: !closest.data.selected };
+            const opts = { showLabel: true };
             this.selectingCircle.select(closest.position, closest.data.number, opts);
         };
-
     }
 
     makeLandmarksClickable() {
@@ -202,7 +201,7 @@ export class CanvasStore {
             });
         landmark.data.selected = true;
         landmark.data.scaled = true;
-        landmark.data.label.opacity = 1;
+        // landmark.data.label.opacity = 1; //left here for case if we will need to show all labels
     }
 
     getSelectedLmScaling() {

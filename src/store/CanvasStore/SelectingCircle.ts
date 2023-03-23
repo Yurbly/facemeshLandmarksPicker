@@ -1,4 +1,4 @@
-import Paper, { PointText, Point, Path } from "paper";
+import { PointText, Point, Path, Size, Shape, Rectangle } from "paper";
 
 export type SelectionOpts = {
     showLabel: boolean;
@@ -9,6 +9,7 @@ class SelectingCircle {
     minCanvasDimension: number;
     circle: paper.Path.Circle;
     label: paper.PointText;
+    labelBg: paper.Shape.Rectangle;
     
     currentHovered: number | null;
 
@@ -27,6 +28,14 @@ class SelectingCircle {
         });
         this.label = new PointText(initPoint);
         this.label.opacity = 0;
+        
+        const rect = new Rectangle(new Point(50, 50), new Point(150, 150));
+        this.labelBg = new Shape.Rectangle(rect, new Size(4, 4));
+        //@ts-ignore
+        this.labelBg.fillColor = 'white';
+        this.labelBg.opacity = 0;
+        
+        this.label.insertAbove(this.labelBg);
     }
 
     select(point: paper.Point, num: number, opts: SelectionOpts) {
@@ -57,24 +66,32 @@ class SelectingCircle {
 
     showLabel(point: paper.Point, num: number) {
         this.label.content = num.toString();
-        const labelWidth = this.label.bounds.width;
-        const isLabelToLeft = point.x > Paper.view.size.width / 2;
-        const labelX = isLabelToLeft ? point.x - labelWidth : point.x + 15;
+        
+        const { x: xScaling, y: yScaling } = this.label.scaling
+        const labelX = point.x + this.label.bounds.width / 2 + (10 * xScaling);
         this.label.position.x = labelX;
         this.label.position.y = point.y;
         this.label.opacity = 1;
         this.label.bringToFront();
+        
+        this.labelBg.position = this.label.position;
+        this.labelBg.size = new Size(this.label.bounds.width / xScaling + 3, this.label.bounds.height / yScaling + 3);
+        this.labelBg.opacity = 1;
     }
 
     hideLabel() {
         this.label.opacity = 0;
         this.label.sendToBack();
+        this.labelBg.opacity = 0;
     }
 
     scale(scale: number) {
         this.circle.scaling = new Point(scale, scale);
         const labelScaling = scale / this.label.scaling.x;
         this.label.scale(labelScaling, this.circle.position);
+        
+        const labelBgScaling = scale / this.labelBg.scaling.x;
+        this.labelBg.scale(labelBgScaling, this.circle.position);
     }
 }
 
