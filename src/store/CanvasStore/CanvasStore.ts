@@ -71,7 +71,6 @@ export class CanvasStore {
         this.initPan();
 
         Paper.view.onMouseLeave = () => this.selectingCircle.deselect();
-        Paper.view.onMouseEnter = () => this.selectingCircle.deselect();
 
         this.viewInitialized = true;
         Paper.view.center = new Point(canvas.width * 0.31, Paper.view.center.y) ;
